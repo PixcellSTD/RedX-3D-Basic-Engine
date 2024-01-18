@@ -1,0 +1,4 @@
+var lsTitle : String;
+lsTitle := rglGetSceneTitle;
+
+rglSetSceneTitle(' RedX Engine Development DP0.42256.223');

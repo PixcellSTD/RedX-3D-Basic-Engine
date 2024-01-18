@@ -1,0 +1,122 @@
+// Declare Global Variables.
+var Scene           : TRGLSceneExposed;
+var ApplicationPath : String;
+var Camera          : TRGLCamera;
+var ScreenWidth     : Integer;
+var ScreenHeight    : Integer;
+
+// Initialize Global Variables.
+Scene           := FindSceneObject;
+ApplicationPath := GetApplicationPath;
+Camera          := GetSceneCamera;
+ScreenWidth     := GetScreenWidth;
+ScreenHeight    := GetScreenHeight;
+
+procedure LoadDebugMap;
+var
+  lLensflairPos : TAffineVector;
+  lLensTexture0  : String;
+  lLensTexture1  : String;
+  lLensTexture2  : String;
+  lLensTexture3  : String;
+  lLensTexture4  : String;
+  lLensTexture5  : String;
+  lLensTexture6  : String;
+  lLensTexture7  : String;
+  lLensTexture8  : String;
+  lColor         : TVector;
+  lClearColor    : TVector;
+begin
+  Scene.SO_ImportEBM(ApplicationPath + '\Data\bunker.ebm', ApplicationPath + '\Data\textures.etp');
+  Scene.Env_LoadSkyboxPackage(ApplicationPath + '\Data\BlueOcean.etp');
+
+  // Initialize and Load Lensflaire
+  Scene.SetAffineVectorFromXYZ(lLensflairPos, 1000, 500, 6000);
+  Scene.Env_Lensflair_Initialize(ScreenWidth, ScreenHeight, lLensflairPos, Camera);
+
+  lLensTexture0  := ApplicationPath + '\Data\Flare0.jpg';
+  lLensTexture1  := ApplicationPath + '\Data\Flare1.jpg';
+  lLensTexture2  := ApplicationPath + '\Data\Flare2.jpg';
+  lLensTexture3  := ApplicationPath + '\Data\Flare3.jpg';
+  lLensTexture4  := ApplicationPath + '\Data\Flare4.jpg';
+  lLensTexture5  := ApplicationPath + '\Data\Flare5.jpg';
+  lLensTexture6  := ApplicationPath + '\Data\Flare6.jpg';
+  lLensTexture7  := ApplicationPath + '\Data\Flare7.jpg';
+  lLensTexture8  := ApplicationPath + '\Data\Flare8.jpg';
+
+  Scene.Env_Lensflair_LoadTextures(lLensTexture0,
+                                   lLensTexture1,
+                                   lLensTexture2,
+                                   lLensTexture3,
+                                   lLensTexture4,
+                                   lLensTexture5,
+                                   lLensTexture6,
+                                   lLensTexture7,
+                                   lLensTexture8);
+
+  Scene.Env_Lensflair_SetVisible(True);
+
+  lColor := VectorMake(0.5, 0.5, 0.5, 1.0);
+  lClearColor := VectorMake(0.0, 0.0, 0.0, 0.5);
+  Scene.Env_Fog_Initialize(lColor, lClearColor, GL_EXP2, 0.002);
+  Scene.Env_Fog_SetVisible(True);
+end;
+
+procedure InitVariables;
+begin
+  Scene.Camera_SetPos(50, 100, 50);
+end;
+
+procedure CreateDebugPath;
+  var lPath : TRGLPath;
+      lPathItem : TRGLPathItem;
+      V1, V2, V3, V4, lView : TAffineVector;
+begin
+  Scene.Path_Add(lPath);
+
+  V1 := AffineVectorMake(-5, -5, -5);
+  V2 := AffineVectorMake(-3, -3, -3);
+  V3 := AffineVectorMake(3, 13, 3);
+  V4 := AffineVectorMake(5, 5, 5);
+  lView := AffineVectorMake(1, 1, 1);
+
+  Scene.Path_AddPathItem(lPath, lPathItem);
+  Scene.Path_SetPathItemValues(lPathItem, 0, AffineVectorMake(20, 10, 55), lView);
+
+  Scene.Path_AddPathItem(lPath, lPathItem);
+  Scene.Path_SetPathItemValues(lPathItem, 0, AffineVectorMake(-3, -3, -3), lView);
+
+  Scene.Path_AddPathItem(lPath, lPathItem);
+  Scene.Path_SetPathItemValues(lPathItem, 0, AffineVectorMake(3, 13, 3), lView);
+
+  Scene.Path_AddPathItem(lPath, lPathItem);
+  Scene.Path_SetPathItemValues(lPathItem, 0, AffineVectorMake(20, 5, 10), lView);
+  
+  Scene.Path_AddPathItem(1Path, 1PathItem);
+  Scene.Path_SetPathItemValues(1PathItem, 0, AffineVectorMake(1000, 500, 0), 1View);
+
+  Scene.Path_SetPathVisible(lPath, True);
+end;
+
+procedure PlayEEIntroMovie;
+var lDone : Boolean;
+begin
+  Scene.DX_PlayMovieLooping(ApplicationPath + '\Data\Intro.mpg', True);
+  while True do
+  begin
+    Scene.DX_MovieIsDone(lDone);
+    if lDone then
+      Break;
+  end;
+
+  Scene.DX_StopMovie;
+end;
+
+{Main Program Start}
+
+PlayEEIntroMovie;
+Scene.DX_PlayMovieLooping(ApplicationPath + '\Data\Loading.avi', True);
+LoadDebugMap;
+InitVariables;
+//CreateDebugPath;
+Scene.DX_StopMovie;
